@@ -1,6 +1,9 @@
 <IfModule mod_rewrite.c>
     RewriteEngine On
     
+    # Force index.php to load first (even if old index.html exists)
+    DirectoryIndex index.php index.html
+    
     # Redirect Trailing Slashes...
     RewriteRule ^(.*)/$ /$1 [L,R=301]
 

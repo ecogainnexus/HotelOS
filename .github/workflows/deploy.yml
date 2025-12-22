@@ -19,8 +19,9 @@ jobs:
           server: ${{ secrets.FTP_SERVER }}
           username: ${{ secrets.FTP_USERNAME }}
           password: ${{ secrets.FTP_PASSWORD }}
-          # IMPORTANT: Root path because FTP User is restricted to /public_html/HotelOS/
-          server-dir: ./ 
+          server-dir: ./
+          # Disable delete to prevent 550 Errors on old folders
+          delete: false
           exclude: |
             **/.git*
             **/.git*/**
