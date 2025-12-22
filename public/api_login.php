@@ -25,23 +25,23 @@ if (!$hotel_code || !$email || !$password) {
 
 try {
     // 1. Verify Tenant
-    // FIX: Removed 'hotel_name' from SELECT to prevent "Column not found" error if schema differs.
-    // We will fetch it if it exists, or fallback.
-    $stmt = $pdo->prepare("SELECT * FROM tenants WHERE subdomain_slug = ? AND status = 'active' LIMIT 1");
+    // SCHEMA UPDATE: 
+    // - status column is 'is_active' (tinyint 1)
+    // - name column is 'business_name'
+    $stmt = $pdo->prepare("SELECT id, business_name FROM tenants WHERE subdomain_slug = ? AND is_active = 1 LIMIT 1");
     $stmt->execute([$hotel_code]);
     $tenant = $stmt->fetch();
 
     if (!$tenant) {
         if ($hotel_code === 'DEMO') {
-            $tenant = ['id' => 1, 'hotel_name' => 'Demo Hotel (Virtual)'];
+            $tenant = ['id' => 1, 'business_name' => 'Demo Hotel (Virtual)'];
         } else {
-            echo json_encode(['status' => 'error', 'message' => 'Invalid Hotel Code.']);
+            echo json_encode(['status' => 'error', 'message' => 'Invalid Hotel Code or Account Inactive.']);
             exit;
         }
     }
 
-    // Handle "hotel_name" column variation safely
-    $tenantName = $tenant['hotel_name'] ?? $tenant['name'] ?? 'Hotel Enterprise';
+    $tenantName = $tenant['business_name']; // Correct column now
 
     // 2. Verify User
     // DEBUG BYPASS: Remove in Production
