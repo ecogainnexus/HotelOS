@@ -62,7 +62,6 @@
              async submitLogin() {
                  this.loading = true;
                  
-                 // Using Fetch API for smooth experience
                  try {
                      const response = await fetch('api_login.php', {
                          method: 'POST',
@@ -72,7 +71,8 @@
                      const data = await response.json();
                      console.log(data);
                      if(data.status === 'success') {
-                         alert('Login logic connected! (Placeholder)');
+                         // Auto-redirect to Dashboard
+                         window.location.href = data.redirect || 'dashboard.php';
                      } else {
                          alert('Error: ' + data.message);
                      }
