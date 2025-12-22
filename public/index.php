@@ -1,83 +1,133 @@
 <?php
 /**
  * public/index.php
- * HotelOS Enterprise - Antigravity Portal
- * The Gateway to Command Center
+ * HotelOS Enterprise - Royal Login Portal
+ * UI REPAIR: Fixed Scroll, Touch Targets, and Theme Colors
  */
 
 // LOGIC LOCK: Keep original logic exactly as is.
 session_start();
 require_once __DIR__ . '/../config/db_connect.php';
 
-// ... (No PHP logic changes needed for UI refactor, handled by api_login.php request)
-
-require_once 'layout.php';
-
-ob_start();
+// ... (API Logic not needed here as it is handled via AJAX to api_login.php or self-submission)
+// We will assume the JS `submitLogin` handles the actual request.
 ?>
+<!DOCTYPE html>
+<html lang="en">
 
-<!-- SPLIT LAYOUT CONTAINER -->
-<div class="flex h-full w-full">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login | HotelOS</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap"
+        rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            transition: all 0.5s ease;
+        }
 
-    <!-- LEFT SIDE: Hotel Art / Branding (Desktop Only) -->
-    <div class="hidden lg:flex w-[45%] flex-col justify-between p-12 relative overflow-hidden">
-        <!-- Background Art -->
-        <div
-            class="absolute inset-0 z-0 bg-gradient-to-br from-blue-900/20 via-transparent to-purple-900/20 bg-cover bg-center">
-        </div>
-        <div class="absolute inset-0 z-0 opacity-30"
-            style="background-image: url('https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?q=80&w=2070&auto=format&fit=crop'); background-size: cover; background-position: center; filter: grayscale(100%) contrast(120%);">
-        </div>
+        [x-cloak] {
+            display: none !important;
+        }
+    </style>
+</head>
 
-        <!-- Overlay Gradient -->
-        <div class="absolute inset-0 z-0 bg-gradient-to-t from-[var(--bg-main)] via-[var(--bg-main)]/50 to-transparent">
-        </div>
+<body class="min-h-screen flex items-center justify-center p-4 transition-colors duration-500" x-data="{ 
+          theme: localStorage.getItem('hotelos_theme') || 'dark',
+          setTheme(val) {
+              this.theme = val;
+              localStorage.setItem('hotelos_theme', val);
+          }
+      }" :class="{
+          'bg-[#F8F9FA]': theme === 'light',
+          'bg-slate-950': theme === 'dark',
+          'bg-[#F5E6D3]': theme === 'comfort'
+      }">
 
-        <!-- Content -->
-        <div class="relative z-10">
-            <div
-                class="w-12 h-12 rounded-xl bg-blue-600 flex items-center justify-center text-white shadow-xl shadow-blue-500/20 mb-6">
-                <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                        d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4">
-                    </path>
-                </svg>
-            </div>
-            <h1 class="text-4xl font-bold app-text-main tracking-tight leading-tight">
-                The Operating System<br>
-                <span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-400">For Modern
-                    Hotels</span>
-            </h1>
-        </div>
+    <!-- BACKGROUND GRADIENTS (No Images) -->
+    <!-- Dark Mode Gradient -->
+    <div class="fixed inset-0 z-0 pointer-events-none transition-opacity duration-700"
+        :class="theme === 'dark' ? 'opacity-100' : 'opacity-0'"
+        style="background: radial-gradient(circle at 50% 0%, #1e293b 0%, #020617 100%);"></div>
 
-        <div class="relative z-10">
-            <div class="flex items-center gap-4 mb-8">
-                <div class="flex -space-x-3">
-                    <img class="w-10 h-10 rounded-full border-2 border-[var(--bg-main)]"
-                        src="https://ui-avatars.com/api/?name=J&background=0D8ABC&color=fff" alt="">
-                    <img class="w-10 h-10 rounded-full border-2 border-[var(--bg-main)]"
-                        src="https://ui-avatars.com/api/?name=A&background=6b21a8&color=fff" alt="">
-                    <div
-                        class="w-10 h-10 rounded-full border-2 border-[var(--bg-main)] bg-gray-700 flex items-center justify-center text-xs text-white font-bold">
-                        +2k</div>
-                </div>
-                <div>
-                    <p class="text-sm font-semibold app-text-main">Trusted by 2,000+ Hoteliers</p>
-                    <p class="text-xs app-text-muted">Powering operations across India</p>
-                </div>
-            </div>
-            <p class="text-xs app-text-muted opacity-60">© 2025 HotelOS Inc. All logic secured.</p>
-        </div>
+    <!-- Light Mode Gradient -->
+    <div class="fixed inset-0 z-0 pointer-events-none transition-opacity duration-700"
+        :class="theme === 'light' ? 'opacity-100' : 'opacity-0'"
+        style="background: radial-gradient(circle at top, #ffffff, #f1f5f9);"></div>
+
+    <!-- Comfort Mode Gradient -->
+    <div class="fixed inset-0 z-0 pointer-events-none transition-opacity duration-700"
+        :class="theme === 'comfort' ? 'opacity-100' : 'opacity-0'"
+        style="background: radial-gradient(circle at center, #F5E6D3, #E6D5C0);"></div>
+
+
+    <!-- THEME SWITCHER (Top Right) -->
+    <div class="fixed top-6 right-6 z-50 flex gap-2 p-1 rounded-full shadow-lg transition-all duration-300" :class="{
+             'bg-white border border-yellow-500/30': theme === 'light',
+             'bg-slate-900 border border-white/10': theme === 'dark',
+             'bg-[#E6D5C0] border border-none': theme === 'comfort'
+         }">
+
+        <!-- Light Button -->
+        <button @click="setTheme('light')" class="p-2 rounded-full transition-all"
+            :class="theme === 'light' ? 'bg-yellow-100 text-yellow-600' : 'text-gray-400 hover:text-gray-600'">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z">
+                </path>
+            </svg>
+        </button>
+
+        <!-- Dark Button -->
+        <button @click="setTheme('dark')" class="p-2 rounded-full transition-all"
+            :class="theme === 'dark' ? 'bg-blue-600 text-white' : 'text-gray-400 hover:text-white'">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path>
+            </svg>
+        </button>
+
+        <!-- Comfort Button -->
+        <button @click="setTheme('comfort')" class="p-2 rounded-full transition-all"
+            :class="theme === 'comfort' ? 'bg-[#8C6B4B] text-[#F5E6D3]' : 'text-gray-400 hover:text-[#4A3B2A]'">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z">
+                </path>
+            </svg>
+        </button>
     </div>
 
-    <!-- RIGHT SIDE: Login Form -->
-    <div class="w-full lg:w-[55%] h-full flex items-center justify-center p-6 relative">
 
-        <div class="absolute inset-0 app-surface opacity-90 lg:opacity-0 pointer-events-none transition-opacity"></div>
+    <!-- MAIN LOGIN CARD -->
+    <div class="relative z-10 w-full max-w-sm rounded-2xl p-8 transition-all duration-500" :class="{
+             'bg-white border border-yellow-500/30 shadow-2xl shadow-yellow-900/5': theme === 'light',
+             'bg-slate-900/50 backdrop-blur-xl border border-white/10 shadow-2xl': theme === 'dark',
+             'bg-[#E6D5C0] border-none shadow-xl': theme === 'comfort'
+         }">
 
-        <div class="w-full max-w-md relative z-10" x-data="{ 
+        <!-- Text Header -->
+        <div class="text-center mb-10">
+            <h1 class="text-3xl font-bold tracking-tight mb-2 transition-colors duration-300" :class="{
+                    'text-slate-800': theme === 'light',
+                    'text-white': theme === 'dark',
+                    'text-[#4A3B2A]': theme === 'comfort'
+                }">HotelOS</h1>
+            <p class="text-sm font-medium transition-colors duration-300" :class="{
+                   'text-slate-500': theme === 'light',
+                   'text-slate-400': theme === 'dark',
+                   'text-[#8C6B4B]': theme === 'comfort'
+               }">Command Center</p>
+        </div>
+
+        <!-- Form -->
+        <div x-data="{ 
                  loading: false, 
-                 focused: '',
                  formData: { hotel_code: '', email: '', password: '' },
                  async submitLogin() {
                      this.loading = true;
@@ -101,110 +151,61 @@ ob_start();
                  }
              }">
 
-            <!-- Mobile Only Header -->
-            <div class="lg:hidden text-center mb-10">
-                <div
-                    class="w-14 h-14 mx-auto rounded-xl bg-blue-600 flex items-center justify-center text-white shadow-xl shadow-blue-500/20 mb-4">
-                    <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4">
-                        </path>
-                    </svg>
+            <form @submit.prevent="submitLogin" class="space-y-5">
+
+                <!-- Inputs: Enforced h-12 (48px) -->
+                <div class="space-y-4">
+                    <input type="text" x-model="formData.hotel_code" placeholder="Hotel Code" required
+                        class="w-full h-12 px-4 rounded-xl text-sm font-medium outline-none transition-all duration-300 border border-transparent focus:border-transparent placeholder-opacity-60"
+                        :class="{
+                            'bg-gray-50 text-slate-800 focus:bg-white focus:ring-2 focus:ring-yellow-500 placeholder-slate-400': theme === 'light',
+                            'bg-white/5 text-white focus:bg-white/10 focus:ring-2 focus:ring-cyan-500 placeholder-white/30': theme === 'dark',
+                            'bg-[#FFF8E7] text-[#4A3B2A] focus:ring-2 focus:ring-[#8C6B4B] placeholder-[#8C6B4B]/50': theme === 'comfort'
+                        }">
+
+                    <input type="email" x-model="formData.email" placeholder="Email Address" required
+                        class="w-full h-12 px-4 rounded-xl text-sm font-medium outline-none transition-all duration-300 border border-transparent focus:border-transparent placeholder-opacity-60"
+                        :class="{
+                            'bg-gray-50 text-slate-800 focus:bg-white focus:ring-2 focus:ring-yellow-500 placeholder-slate-400': theme === 'light',
+                            'bg-white/5 text-white focus:bg-white/10 focus:ring-2 focus:ring-cyan-500 placeholder-white/30': theme === 'dark',
+                            'bg-[#FFF8E7] text-[#4A3B2A] focus:ring-2 focus:ring-[#8C6B4B] placeholder-[#8C6B4B]/50': theme === 'comfort'
+                        }">
+
+                    <input type="password" x-model="formData.password" placeholder="Password" required
+                        class="w-full h-12 px-4 rounded-xl text-sm font-medium outline-none transition-all duration-300 border border-transparent focus:border-transparent placeholder-opacity-60"
+                        :class="{
+                            'bg-gray-50 text-slate-800 focus:bg-white focus:ring-2 focus:ring-yellow-500 placeholder-slate-400': theme === 'light',
+                            'bg-white/5 text-white focus:bg-white/10 focus:ring-2 focus:ring-cyan-500 placeholder-white/30': theme === 'dark',
+                            'bg-[#FFF8E7] text-[#4A3B2A] focus:ring-2 focus:ring-[#8C6B4B] placeholder-[#8C6B4B]/50': theme === 'comfort'
+                        }">
                 </div>
-                <h2 class="text-2xl font-bold app-text-main">Welcome Back</h2>
-                <p class="text-sm app-text-muted">Enter Command Center</p>
-            </div>
 
-            <!-- Glass Card Container -->
-            <div class="app-card rounded-2xl p-8 lg:p-10 shadow-2xl transition-all duration-300 transform"
-                :class="focused ? 'scale-[1.01]' : ''">
+                <!-- Action Button: h-12 (48px) -->
+                <button type="submit" :disabled="loading"
+                    class="w-full h-12 rounded-xl font-bold text-sm tracking-wide uppercase transition-all transform active:scale-95 shadow-lg"
+                    :class="{
+                        'bg-slate-900 text-white hover:bg-slate-800 shadow-slate-900/20': theme === 'light',
+                        'bg-blue-600 text-white hover:bg-blue-500 shadow-blue-500/30': theme === 'dark',
+                        'bg-[#8C6B4B] text-[#F5E6D3] hover:bg-[#7A5C3E] shadow-[#8C6B4B]/20': theme === 'comfort'
+                    }">
+                    <span x-show="!loading">Enter System</span>
+                    <span x-show="loading" class="animate-pulse">Loading...</span>
+                </button>
 
-                <h2 class="text-2xl font-bold app-text-main mb-1 hidden lg:block">System Access</h2>
-                <p class="text-sm app-text-muted mb-8 hidden lg:block">Authenticate to manage your property.</p>
-
-                <form @submit.prevent="submitLogin" class="space-y-6">
-
-                    <!-- Floating Label Input: Hotel Code -->
-                    <div class="relative">
-                        <input type="text" x-model="formData.hotel_code" required @focus="focused = 'hotel_code'"
-                            @blur="focused = ''"
-                            class="peer w-full h-12 app-input rounded-lg px-4 pt-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all placeholder-transparent"
-                            placeholder="Property Code">
-                        <label
-                            class="absolute left-4 top-1 text-[10px] uppercase font-bold text-gray-400 transition-all 
-                                      peer-placeholder-shown:top-4 peer-placeholder-shown:text-base peer-placeholder-shown:text-gray-500 peer-placeholder-shown:font-normal peer-placeholder-shown:capitalize
-                                      peer-focus:top-1 peer-focus:text-[10px] peer-focus:text-blue-500 peer-focus:font-bold peer-focus:uppercase">
-                            Property Code
-                        </label>
-                    </div>
-
-                    <!-- Floating Label Input: Email -->
-                    <div class="relative">
-                        <input type="email" x-model="formData.email" required @focus="focused = 'email'"
-                            @blur="focused = ''"
-                            class="peer w-full h-12 app-input rounded-lg px-4 pt-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all placeholder-transparent"
-                            placeholder="Access Email">
-                        <label
-                            class="absolute left-4 top-1 text-[10px] uppercase font-bold text-gray-400 transition-all 
-                                      peer-placeholder-shown:top-4 peer-placeholder-shown:text-base peer-placeholder-shown:text-gray-500 peer-placeholder-shown:font-normal peer-placeholder-shown:capitalize
-                                      peer-focus:top-1 peer-focus:text-[10px] peer-focus:text-blue-500 peer-focus:font-bold peer-focus:uppercase">
-                            Access Email
-                        </label>
-                    </div>
-
-                    <!-- Floating Label Input: Password -->
-                    <div class="relative">
-                        <input type="password" x-model="formData.password" required @focus="focused = 'password'"
-                            @blur="focused = ''"
-                            class="peer w-full h-12 app-input rounded-lg px-4 pt-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all placeholder-transparent"
-                            placeholder="Security Key">
-                        <label
-                            class="absolute left-4 top-1 text-[10px] uppercase font-bold text-gray-400 transition-all 
-                                      peer-placeholder-shown:top-4 peer-placeholder-shown:text-base peer-placeholder-shown:text-gray-500 peer-placeholder-shown:font-normal peer-placeholder-shown:capitalize
-                                      peer-focus:top-1 peer-focus:text-[10px] peer-focus:text-blue-500 peer-focus:font-bold peer-focus:uppercase">
-                            Security Key
-                        </label>
-                    </div>
-
-                    <!-- Actions -->
-                    <div class="flex items-center justify-between text-xs">
-                        <label
-                            class="flex items-center gap-2 cursor-pointer app-text-muted hover:text-blue-500 transition">
-                            <input type="checkbox"
-                                class="w-4 h-4 rounded border-gray-600 text-blue-600 focus:ring-offset-0 focus:ring-0">
-                            Remember Access
-                        </label>
-                        <a href="#" class="text-blue-500 hover:text-blue-400 font-medium">Reset Key?</a>
-                    </div>
-
-                    <!-- Submit Button -->
-                    <button type="submit" :disabled="loading"
-                        class="w-full h-12 app-btn font-bold rounded-lg transition-all shadow-lg flex items-center justify-center disabled:opacity-70 disabled:cursor-not-allowed hover:-translate-y-0.5 mt-2">
-                        <span x-show="!loading" class="tracking-wide uppercase text-sm">Initialize Session</span>
-                        <span x-show="loading" class="flex items-center gap-2">
-                            <svg class="animate-spin h-4 w-4" fill="none" viewBox="0 0 24 24">
-                                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor"
-                                    stroke-width="4"></circle>
-                                <path class="opacity-75" fill="currentColor"
-                                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
-                                </path>
-                            </svg>
-                            Authenticating...
-                        </span>
-                    </button>
-                </form>
-
-            </div>
-
-            <p class="text-[10px] text-center mt-8 app-text-muted opacity-50">
-                Authorized Personnel Only. Connection Monitored.
-            </p>
-
+            </form>
         </div>
-    </div>
-</div>
 
-<?php
-$content = ob_get_clean();
-renderLayout("Command Center", $content);
-?>
+        <!-- Footer Note -->
+        <p class="mt-8 text-center text-xs opacity-60 font-medium transition-colors" :class="{
+               'text-slate-400': theme === 'light',
+               'text-slate-500': theme === 'dark',
+               'text-[#8C6B4B]': theme === 'comfort'
+           }">
+            Security Optimized. Logic Locked.
+        </p>
+
+    </div>
+
+</body>
+
+</html>
