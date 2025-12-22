@@ -52,7 +52,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
     $mobile = $_POST['mobile'] ?? '';
     
     if (strlen($mobile) >= 10) {
-        $stmt = $pdo->prepare("SELECT id, full_name, mobile, email, identity_card_type, identity_card_number, city, state FROM guests WHERE tenant_id = ? AND mobile = ? LIMIT 1");
+        $stmt = $pdo->prepare("SELECT id, full_name, mobile, email, company_name, gst_number, address, identity_card_type, identity_card_number, city, state FROM guests WHERE tenant_id = ? AND mobile = ? LIMIT 1");
         $stmt->execute([$tenantId, $mobile]);
         $guest = $stmt->fetch(PDO::FETCH_ASSOC);
         
@@ -77,6 +77,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
     $guestName = trim($_POST['guest_name'] ?? '');
     $mobile = trim($_POST['mobile'] ?? '');
     $email = trim($_POST['email'] ?? '');
+    $companyName = trim($_POST['company_name'] ?? '');
+    $gstNumber = trim($_POST['gst_number'] ?? '');
+    $address = trim($_POST['address'] ?? '');
     $idType = $_POST['id_type'] ?? '';
     $idNumber = trim($_POST['id_number'] ?? '');
     $city = trim($_POST['city'] ?? '');
@@ -98,12 +101,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
             
             // STEP 1: Create or Update Guest
             if (empty($guestId)) {
-                $stmt = $pdo->prepare("INSERT INTO guests (tenant_id, full_name, mobile, email, identity_card_type, identity_card_number, city, state) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
-                $stmt->execute([$tenantId, $guestName, $mobile, $email, $idType, $idNumber, $city, $state]);
+                $stmt = $pdo->prepare("INSERT INTO guests (tenant_id, full_name, mobile, email, company_name, gst_number, address, identity_card_type, identity_card_number, city, state) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+                $stmt->execute([$tenantId, $guestName, $mobile, $email, $companyName, $gstNumber, $address, $idType, $idNumber, $city, $state]);
                 $guestId = $pdo->lastInsertId();
             } else {
-                $stmt = $pdo->prepare("UPDATE guests SET full_name = ?, email = ?, identity_card_type = ?, identity_card_number = ?, city = ?, state = ? WHERE id = ? AND tenant_id = ?");
-                $stmt->execute([$guestName, $email, $idType, $idNumber, $city, $state, $guestId, $tenantId]);
+                $stmt = $pdo->prepare("UPDATE guests SET full_name = ?, email = ?, company_name = ?, gst_number = ?, address = ?, identity_card_type = ?, identity_card_number = ?, city = ?, state = ? WHERE id = ? AND tenant_id = ?");
+                $stmt->execute([$guestName, $email, $companyName, $gstNumber, $address, $idType, $idNumber, $city, $state, $guestId, $tenantId]);
             }
             
             // STEP 2: Create Booking
@@ -203,6 +206,21 @@ ob_start();
                     <label class="block mb-2 text-xs font-semibold app-text-muted uppercase">Email</label>
                     <input type="email" name="email" x-model="email"
                         class="app-input w-full px-4 py-3 rounded-lg focus:outline-none focus:ring-1 focus:ring-blue-500 transition-all" placeholder="Email Address">
+                </div>
+
+                <!-- Company Details (B2B) -->
+                <div class="mb-5 p-4 rounded-lg bg-[var(--surface-color)]/30 border border-[var(--glass-border)]">
+                    <label class="block mb-3 text-xs font-bold text-amber-500 uppercase">B2B Details (Optional)</label>
+                    <div class="grid grid-cols-1 gap-3">
+                        <input type="text" name="company_name" x-model="companyName" class="app-input w-full px-4 py-3 rounded-lg text-sm focus:outline-none focus:ring-1 focus:ring-amber-500 transition-all" placeholder="Company Name">
+                        <input type="text" name="gst_number" x-model="gstNumber" class="app-input w-full px-4 py-3 rounded-lg text-sm font-mono focus:outline-none focus:ring-1 focus:ring-amber-500 transition-all" placeholder="GST Number (e.g. 29XXXXX1234X1ZX)">
+                    </div>
+                </div>
+
+                <!-- Address (Legal Requirement) -->
+                <div class="mb-5">
+                    <label class="block mb-2 text-xs font-semibold app-text-muted uppercase">Full Address</label>
+                    <textarea name="address" x-model="address" rows="2" class="app-input w-full px-4 py-3 rounded-lg text-sm focus:outline-none focus:ring-1 focus:ring-blue-500 transition-all resize-none" placeholder="Street, City, State, PIN"></textarea>
                 </div>
 
                 <!-- ID Proof -->
@@ -325,6 +343,9 @@ function checkinApp() {
         guestName: '',
         mobile: '',
         email: '',
+        companyName: '',
+        gstNumber: '',
+        address: '',
         idType: '',
         idNumber: '',
         city: '',
@@ -353,6 +374,9 @@ function checkinApp() {
                     this.guestId = data.guest.id;
                     this.guestName = data.guest.full_name;
                     this.email = data.guest.email || '';
+                    this.companyName = data.guest.company_name || '';
+                    this.gstNumber = data.guest.gst_number || '';
+                    this.address = data.guest.address || '';
                     this.idType = data.guest.identity_card_type || '';
                     this.idNumber = data.guest.identity_card_number || '';
                 } else {
