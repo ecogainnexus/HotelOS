@@ -14,6 +14,10 @@ if (!isset($_SESSION['user_id'])) {
 
 require_once __DIR__ . '/../config/db_connect.php';
 
+// Flash Messages
+$flashSuccess = $_SESSION['flash_success'] ?? '';
+unset($_SESSION['flash_success']);
+
 // =====================================================
 // ROLE 1: THE BACKEND ENGINEER (Data Fetching)
 // =====================================================
@@ -125,10 +129,6 @@ $occupancyPercent = $totalRooms > 0 ? round(($occupiedRooms / $totalRooms) * 100
 
 <body class="bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 min-h-screen">
 
-    <!-- =====================================================
-         ROLE 2: THE UI DESIGNER (Glassmorphism Layout)
-         ===================================================== -->
-
     <!-- Header -->
     <header class="glass sticky top-0 z-50 px-6 py-4">
         <div class="flex justify-between items-center max-w-7xl mx-auto">
@@ -145,6 +145,49 @@ $occupancyPercent = $totalRooms > 0 ? round(($occupiedRooms / $totalRooms) * 100
     </header>
 
     <main class="max-w-7xl mx-auto p-6 space-y-8">
+
+        <!-- Flash Success Message -->
+        <?php if ($flashSuccess): ?>
+            <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded-xl flex items-center gap-3"
+                x-data="{ show: true }" x-show="show" x-init="setTimeout(() => show = false, 5000)">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
+                    stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                </svg>
+                <span><?= htmlspecialchars($flashSuccess) ?></span>
+            </div>
+        <?php endif; ?>
+
+        <!-- Quick Actions -->
+        <section class="flex flex-wrap gap-4">
+            <a href="checkin.php"
+                class="bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white font-semibold px-6 py-3 rounded-xl shadow-lg flex items-center gap-2 transition transform hover:-translate-y-0.5">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
+                    stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z" />
+                </svg>
+                New Check-In
+            </a>
+            <a href="checkout.php"
+                class="bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 text-white font-semibold px-6 py-3 rounded-xl shadow-lg flex items-center gap-2 transition transform hover:-translate-y-0.5">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
+                    stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                </svg>
+                Check-Out
+            </a>
+            <a href="rooms.php"
+                class="bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 text-white font-semibold px-6 py-3 rounded-xl shadow-lg flex items-center gap-2 transition transform hover:-translate-y-0.5">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
+                    stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+                </svg>
+                Manage Rooms
+            </a>
+        </section>
 
         <!-- Stats Grid (4 Columns) -->
         <section class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -285,9 +328,11 @@ $occupancyPercent = $totalRooms > 0 ? round(($occupiedRooms / $totalRooms) * 100
                                 <div class="flex justify-between items-start">
                                     <div>
                                         <p class="font-semibold text-gray-800">Room
-                                            <?= htmlspecialchars($booking['room_number'] ?? 'N/A') ?></p>
+                                            <?= htmlspecialchars($booking['room_number'] ?? 'N/A') ?>
+                                        </p>
                                         <p class="text-xs text-gray-500">
-                                            <?= date('d M, h:i A', strtotime($booking['check_in'])) ?></p>
+                                            <?= date('d M, h:i A', strtotime($booking['check_in'])) ?>
+                                        </p>
                                     </div>
                                     <span
                                         class="text-xs px-2 py-1 rounded-full <?= $badgeClass ?>"><?= ucfirst($booking['status']) ?></span>
