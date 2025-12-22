@@ -56,7 +56,7 @@ try {
     }
 
     // Real DB Verification
-    $stmt = $pdo->prepare("SELECT id, password_hash, role, full_name FROM users WHERE email = ? AND tenant_id = ? LIMIT 1");
+    $stmt = $pdo->prepare("SELECT id, password_hash, role, name FROM users WHERE email = ? AND tenant_id = ? LIMIT 1");
     $stmt->execute([$email, $tenant['id']]);
     $user = $stmt->fetch();
 
@@ -64,7 +64,7 @@ try {
         $_SESSION['user_id'] = $user['id'];
         $_SESSION['tenant_id'] = $tenant['id'];
         $_SESSION['role'] = $user['role'];
-        $_SESSION['user_name'] = $user['full_name'];
+        $_SESSION['user_name'] = $user['name'];
         $_SESSION['hotel_name'] = $tenantName;
         echo json_encode(['status' => 'success', 'redirect' => 'dashboard.php']);
     } else {
