@@ -64,7 +64,7 @@
                  
                  // Using Fetch API for smooth experience
                  try {
-                     const response = await fetch('../auth/login_logic.php', {
+                     const response = await fetch('api_login.php', {
                          method: 'POST',
                          headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
                          body: new URLSearchParams(this.formData)
