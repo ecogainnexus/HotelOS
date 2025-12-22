@@ -1,0 +1,16 @@
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    RewriteRule ^$ public/ [L]
+    RewriteRule (.*) public/$1 [L]
+</IfModule>
+
+# Prevent access to dotfiles and sensitive directories
+<FilesMatch "^\.">
+    Order allow,deny
+    Deny from all
+</FilesMatch>
+
+<DirectoryMatch "^(config|auth)">
+    Order allow,deny
+    Deny from all
+</DirectoryMatch>

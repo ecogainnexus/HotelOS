@@ -1,0 +1,23 @@
+# Vendor
+vendor/
+node_modules/
+
+# Environment Variables
+.env
+.env.local
+
+# IDEs
+.vscode/
+.idea/
+
+# System
+.DS_Store
+Thumbs.db
+
+# Logs
+error_log
+access_log
+*.log
+
+# Temp
+tmp/
