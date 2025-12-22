@@ -20,11 +20,12 @@ jobs:
           username: ${{ secrets.FTP_USERNAME }}
           password: ${{ secrets.FTP_PASSWORD }}
           server-dir: ./
-          # Disable delete to prevent 550 Errors on old folders
-          delete: false
+          # 'delete' option was invalid. Using 'exclude' to prevent touching legacy folders.
           exclude: |
             **/.git*
             **/.git*/**
             **/node_modules/**
             .gitignore
             README.md
+            api/**
+            assets/**
