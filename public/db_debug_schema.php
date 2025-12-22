@@ -1,22 +1,14 @@
 <?php
-// public/db_debug_schema.php
 ini_set('display_errors', 1);
 error_reporting(E_ALL);
 require_once __DIR__ . '/../config/db_connect.php';
 
-function showTable($pdo, $table)
-{
-    try {
-        echo "<h1>Table: $table</h1>";
-        $q = $pdo->query("DESCRIBE $table");
-        $rows = $q->fetchAll(PDO::FETCH_ASSOC);
-        echo "<pre>";
-        print_r($rows);
-        echo "</pre>";
-    } catch (Exception $e) {
-        echo "<h2>$table: " . $e->getMessage() . "</h2>";
-    }
+echo "<h1>Guests Table Schema</h1><pre>";
+try {
+    $q = $pdo->query("DESCRIBE guests");
+    print_r($q->fetchAll(PDO::FETCH_ASSOC));
+} catch (Exception $e) {
+    echo "Error: " . $e->getMessage();
 }
-
-showTable($pdo, 'guests');
+echo "</pre>";
 ?>
