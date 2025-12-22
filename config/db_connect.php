@@ -11,8 +11,8 @@ if (basename($_SERVER['PHP_SELF']) == basename(__FILE__)) {
 
 $host = 'localhost';
 $db = 'uplfveim_hotelos';
-$user = 'uplfveim_admin';
-$pass = 'jm@HS10$$'; // Updated with the password you provided
+$user = 'uplfveim_hotelos'; // Corrected Username
+$pass = 'jm@HS10$$';
 $charset = 'utf8mb4';
 
 $dsn = "mysql:host=$host;dbname=$db;charset=$charset";

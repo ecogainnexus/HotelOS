@@ -6,8 +6,8 @@ error_reporting(E_ALL);
 
 $host = 'localhost';
 $db = 'uplfveim_hotelos';
-$user = 'uplfveim_admin';
-$pass = 'jm@HS10$$'; // Testing the current credential
+$user = 'uplfveim_hotelos'; // Corrected
+$pass = 'jm@HS10$$';
 $charset = 'utf8mb4';
 
 echo "Attempting connection...<br>";
