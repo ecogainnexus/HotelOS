@@ -5,7 +5,6 @@
  */
 session_start();
 
-// Include DB Connect from the config folder (one level up)
 require_once __DIR__ . '/../config/db_connect.php';
 
 header('Content-Type: application/json');
@@ -25,30 +24,33 @@ if (!$hotel_code || !$email || !$password) {
 }
 
 try {
-    // 1. Verify Tenant (Hotel Code)
-    $stmt = $pdo->prepare("SELECT id, hotel_name FROM tenants WHERE subdomain_slug = ? AND status = 'active' LIMIT 1");
+    // 1. Verify Tenant
+    // FIX: Removed 'hotel_name' from SELECT to prevent "Column not found" error if schema differs.
+    // We will fetch it if it exists, or fallback.
+    $stmt = $pdo->prepare("SELECT * FROM tenants WHERE subdomain_slug = ? AND status = 'active' LIMIT 1");
     $stmt->execute([$hotel_code]);
     $tenant = $stmt->fetch();
 
     if (!$tenant) {
-        // Fallback for FIRST TIME LOGIN (If DB is empty/Demo)
         if ($hotel_code === 'DEMO') {
-            // Fake tenant for testing
-            $tenant = ['id' => 1, 'hotel_name' => 'Demo Hotel'];
+            $tenant = ['id' => 1, 'hotel_name' => 'Demo Hotel (Virtual)'];
         } else {
             echo json_encode(['status' => 'error', 'message' => 'Invalid Hotel Code.']);
             exit;
         }
     }
 
+    // Handle "hotel_name" column variation safely
+    $tenantName = $tenant['hotel_name'] ?? $tenant['name'] ?? 'Hotel Enterprise';
+
     // 2. Verify User
-    // For now, allow the hardcoded admin login for testing
+    // DEBUG BYPASS: Remove in Production
     if ($email === 'admin@hotelos.in' && $password === 'admin123') {
         $_SESSION['user_id'] = 999;
         $_SESSION['tenant_id'] = $tenant['id'];
         $_SESSION['role'] = 'owner';
         $_SESSION['user_name'] = 'Super Admin';
-        $_SESSION['hotel_name'] = $tenant['hotel_name'];
+        $_SESSION['hotel_name'] = $tenantName;
         echo json_encode(['status' => 'success', 'redirect' => 'dashboard.php']);
         exit;
     }
@@ -63,7 +65,7 @@ try {
         $_SESSION['tenant_id'] = $tenant['id'];
         $_SESSION['role'] = $user['role'];
         $_SESSION['user_name'] = $user['full_name'];
-        $_SESSION['hotel_name'] = $tenant['hotel_name'];
+        $_SESSION['hotel_name'] = $tenantName;
         echo json_encode(['status' => 'success', 'redirect' => 'dashboard.php']);
     } else {
         echo json_encode(['status' => 'error', 'message' => 'Invalid Email or Password.']);
