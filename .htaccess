@@ -1,10 +1,16 @@
 <IfModule mod_rewrite.c>
     RewriteEngine On
-    RewriteRule ^$ public/ [L]
-    RewriteRule (.*) public/$1 [L]
+    
+    # Redirect Trailing Slashes...
+    RewriteRule ^(.*)/$ /$1 [L,R=301]
+
+    # Handle Front Controller...
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteRule ^ index.php [L]
 </IfModule>
 
-# Prevent access to dotfiles and sensitive directories
+# Protect Config & Auth
 <FilesMatch "^\.">
     Order allow,deny
     Deny from all
