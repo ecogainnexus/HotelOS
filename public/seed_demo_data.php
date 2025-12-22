@@ -14,62 +14,21 @@ $tenantId = 1; // Demo tenant
 echo "<h1>🌱 HotelOS Demo Data Seeder</h1>";
 
 try {
-    // Check if rooms already exist
-    $stmt = $pdo->prepare("SELECT COUNT(*) FROM rooms WHERE tenant_id = ?");
+    // Seed a Demo Guest (FIXED: using 'mobile' instead of 'phone')
+    $stmt = $pdo->prepare("SELECT COUNT(*) FROM guests WHERE tenant_id = ?");
     $stmt->execute([$tenantId]);
-    $existingRooms = (int) $stmt->fetchColumn();
+    $existingGuests = (int) $stmt->fetchColumn();
 
-    if ($existingRooms > 0) {
-        echo "<p>⚠️ Rooms already exist ($existingRooms rooms). Skipping room seeding.</p>";
+    if ($existingGuests == 0) {
+        $stmt = $pdo->prepare("INSERT INTO guests (tenant_id, full_name, mobile, email) VALUES (?, ?, ?, ?)");
+        $stmt->execute([$tenantId, 'Rahul Sharma', '9876543210', 'rahul@demo.com']);
+        echo "<p>✅ Seeded 1 demo guest!</p>";
+        $guestId = $pdo->lastInsertId();
     } else {
-        // Seed 15 Rooms
-        $rooms = [
-            ['101', '1', 'standard', 'available', 1500],
-            ['102', '1', 'standard', 'occupied', 1500],
-            ['103', '1', 'standard', 'dirty', 1500],
-            ['104', '1', 'deluxe', 'available', 2500],
-            ['105', '1', 'deluxe', 'occupied', 2500],
-            ['201', '2', 'deluxe', 'available', 2500],
-            ['202', '2', 'suite', 'occupied', 4500],
-            ['203', '2', 'suite', 'available', 4500],
-            ['204', '2', 'standard', 'maintenance', 1500],
-            ['205', '2', 'standard', 'available', 1500],
-            ['301', '3', 'suite', 'available', 4500],
-            ['302', '3', 'deluxe', 'occupied', 2500],
-            ['303', '3', 'standard', 'available', 1500],
-            ['304', '3', 'standard', 'dirty', 1500],
-            ['305', '3', 'dormitory', 'available', 800],
-        ];
-
-        $stmt = $pdo->prepare("INSERT INTO rooms (tenant_id, room_number, floor_number, category, status, base_price) VALUES (?, ?, ?, ?, ?, ?)");
-
-        foreach ($rooms as $room) {
-            $stmt->execute([$tenantId, $room[0], $room[1], $room[2], $room[3], $room[4]]);
-        }
-
-        echo "<p>✅ Seeded " . count($rooms) . " rooms successfully!</p>";
-    }
-
-    // Check for guests table
-    try {
-        $pdo->query("SELECT 1 FROM guests LIMIT 1");
-        $guestsTableExists = true;
-    } catch (Exception $e) {
-        $guestsTableExists = false;
-        echo "<p>⚠️ Guests table not found. Skipping guest seeding.</p>";
-    }
-
-    // Seed a Demo Guest (if table exists)
-    if ($guestsTableExists) {
-        $stmt = $pdo->prepare("SELECT COUNT(*) FROM guests WHERE tenant_id = ?");
+        echo "<p>⚠️ Guest already exists. Using existing guest.</p>";
+        $stmt = $pdo->prepare("SELECT id FROM guests WHERE tenant_id = ? LIMIT 1");
         $stmt->execute([$tenantId]);
-        $existingGuests = (int) $stmt->fetchColumn();
-
-        if ($existingGuests == 0) {
-            $stmt = $pdo->prepare("INSERT INTO guests (tenant_id, full_name, phone, email) VALUES (?, ?, ?, ?)");
-            $stmt->execute([$tenantId, 'Rahul Sharma', '9876543210', 'rahul@demo.com']);
-            echo "<p>✅ Seeded 1 demo guest!</p>";
-        }
+        $guestId = (int) $stmt->fetchColumn();
     }
 
     // Seed Demo Bookings
@@ -98,7 +57,7 @@ try {
                 $paid = rand(0, 1) ? $amount : $amount / 2;
                 $bookingStmt->execute([
                     $tenantId,
-                    1, // Demo guest ID
+                    $guestId,
                     $roomId,
                     $bookingId,
                     $today,
@@ -112,12 +71,14 @@ try {
             }
 
             echo "<p>✅ Seeded " . count($occupiedRoomIds) . " demo bookings!</p>";
+        } else {
+            echo "<p>⚠️ No occupied rooms found to create bookings.</p>";
         }
     }
 
     echo "<hr>";
     echo "<h2>🎉 Seeding Complete!</h2>";
-    echo "<p>Dashboard data is now ready. <a href='dashboard.php' style='color:blue;'>Go to Dashboard →</a></p>";
+    echo "<p>Dashboard data is now ready. <a href='dashboard.php' style='color:blue; font-weight:bold;'>Go to Dashboard →</a></p>";
     echo "<p style='color:red;'><strong>⚠️ DELETE THIS FILE (seed_demo_data.php) IN PRODUCTION!</strong></p>";
 
 } catch (Exception $e) {
