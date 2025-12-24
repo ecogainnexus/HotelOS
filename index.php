@@ -1,11 +1,12 @@
 <?php
 /**
- * Root Entry Point
+ * Root Entry Point - HotelOS
  * 
- * Simple proxy to load the public application.
- * This fixes 403 errors on shared hosting where .htaccess rewrites fail.
+ * Simple redirect to the public application folder.
+ * This ensures all paths are correctly resolved for assets and APIs.
  */
 
-// Load the actual frontend
-require_once __DIR__ . '/public/index.php';
+// Redirect to public folder
+header('Location: public/');
+exit;
 ?>
