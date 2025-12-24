@@ -9,11 +9,12 @@ session_start();
 
 // Security: Redirect if not logged in
 if (!isset($_SESSION['user_id'])) {
-    header('Location: ../../');
+    header('Location: ' . LOGIN_URL);
     exit;
 }
 
 require_once __DIR__ . '/../config/db_connect.php';
+require_once __DIR__ . '/../config/config.php';
 require_once 'layout.php';
 
 // Flash Messages

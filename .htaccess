@@ -1,25 +1,56 @@
 <IfModule mod_rewrite.c>
     RewriteEngine On
+    RewriteBase /HotelOS/
     
-    # Force index.php to load first (even if old index.html exists)
-    DirectoryIndex index.php index.html
+    # ==============================================================================
+    # CLEAN URL ARCHITECTURE - Hide /public/ from URLs
+    # ==============================================================================
     
-    # Redirect Trailing Slashes...
-    RewriteRule ^(.*)/$ /$1 [L,R=301]
-
-    # Handle Front Controller...
-    RewriteCond %{REQUEST_FILENAME} !-d
+    # Force index.php as default directory index
+    DirectoryIndex index.php
+    
+    # Handle case-insensitive access: hotelos → HotelOS
+    RewriteCond %{REQUEST_URI} ^/hotelos [NC]
+    RewriteRule ^(.*)$ /HotelOS/$1 [R=301,L]
+    
+    # Redirect root to public folder (internal rewrite, no URL change)
+    # Example: /HotelOS/ → serves /HotelOS/public/index.php
+    RewriteCond %{REQUEST_URI} ^/HotelOS/?$
+    RewriteRule ^(.*)$ /HotelOS/public/index.php [L]
+    
+    # Map clean URLs to public folder
+    # Example: /HotelOS/dashboard → serves /HotelOS/public/dashboard.php
     RewriteCond %{REQUEST_FILENAME} !-f
-    RewriteRule ^ index.php [L]
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteCond %{REQUEST_URI} !^/HotelOS/public/
+    RewriteRule ^(.*)$ /HotelOS/public/$1.php [L]
+    
+    # If file exists in public folder, serve it directly
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteCond %{REQUEST_URI} !^/HotelOS/public/
+    RewriteRule ^(.*)$ /HotelOS/public/$1 [L]
+    
 </IfModule>
 
-# Protect Config & Auth
+# ==============================================================================
+# SECURITY - Protect sensitive directories
+# ==============================================================================
+
+# Block access to config and auth directories
+<DirectoryMatch "^.*(config|auth).*$">
+    Order allow,deny
+    Deny from all
+</DirectoryMatch>
+
+# Block access to hidden files
 <FilesMatch "^\.">
     Order allow,deny
     Deny from all
 </FilesMatch>
 
-<DirectoryMatch "^(config|auth)">
+# Block direct access to PHP files in root (force routing through .htaccess)
+<FilesMatch "^(index|diagnose)\.php$">
     Order allow,deny
-    Deny from all
-</DirectoryMatch>
+    Allow from all
+</FilesMatch>

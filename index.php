@@ -2,20 +2,16 @@
 /**
  * Root Entry Point - HotelOS
  * 
- * Redirects to login page in public/ folder.
- * Uses absolute path to ensure correct subdirectory resolution.
+ * This file should NOT be accessed directly.
+ * The .htaccess rewrites all requests to public/ folder internally.
+ * 
+ * If you see this file executing, .htaccess is not working.
  */
 
-// Get the current directory path from the script location
-$base = dirname($_SERVER['PHP_SELF']);
+// Define application base URL for use across the application
+define('BASE_URL', '/HotelOS');
 
-// Handle root directory edge case
-if ($base === '/' || $base === '\\') {
-    $base = '';
-}
-
-// Redirect to public/ within this application directory  
-// Example: /HotelOS/index.php → /HotelOS/public/
-header('Location: ' . $base . '/public/');
+// Fallback redirect if .htaccess fails
+header('Location: ' . BASE_URL . '/public/index.php');
 exit;
 ?>
