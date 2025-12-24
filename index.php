@@ -2,11 +2,20 @@
 /**
  * Root Entry Point - HotelOS
  * 
- * Simple redirect to the public application folder.
- * This ensures all paths are correctly resolved for assets and APIs.
+ * Redirects to login page in public/ folder.
+ * Uses absolute path to ensure correct subdirectory resolution.
  */
 
-// Redirect to public folder
-header('Location: public/');
+// Get the current directory path from the script location
+$base = dirname($_SERVER['PHP_SELF']);
+
+// Handle root directory edge case
+if ($base === '/' || $base === '\\') {
+    $base = '';
+}
+
+// Redirect to public/ within this application directory  
+// Example: /HotelOS/index.php → /HotelOS/public/
+header('Location: ' . $base . '/public/');
 exit;
 ?>
