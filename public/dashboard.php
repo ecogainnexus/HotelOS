@@ -131,7 +131,7 @@ ob_start();
             </svg>
             New Check-In
         </a>
-        <a href="#"
+        <a href="checkout.php"
             class="app-card hover:bg-[var(--glass-border)] app-text-main font-semibold px-6 py-3 rounded-xl shadow-lg flex items-center gap-2 transition hover:-translate-y-0.5 border border-[var(--glass-border)]">
             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
                 stroke="currentColor">

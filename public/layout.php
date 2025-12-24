@@ -5,7 +5,7 @@
  * Contains: Theme Engine, Global Styles, Alpine.js Setup
  */
 
-function renderLayout($title, $content)
+function renderLayout($title, $content, $showSidebar = false)
 {
     ?>
     <!DOCTYPE html>
