@@ -9,7 +9,7 @@ session_start();
 
 // Security: Redirect if not logged in
 if (!isset($_SESSION['user_id'])) {
-    header('Location: index.php');
+    header('Location: ../../');
     exit;
 }
 
@@ -101,9 +101,17 @@ ob_start();
 <header
     class="lg:hidden flex items-center justify-between p-4 app-card border-b-0 border-r-0 border-l-0 border-[var(--glass-border)] shrink-0 sticky top-0 z-30">
     <span class="font-tech font-bold text-lg tracking-wider app-text-main">DASHBOARD</span>
-    <div
-        class="h-8 w-8 rounded-full bg-gray-500/20 flex items-center justify-center text-xs text-white font-bold border border-[var(--glass-border)]">
-        <?= substr($userName, 0, 1) ?>
+    <div class="flex items-center gap-3">
+        <span class="text-xs app-text-muted font-medium"><?= htmlspecialchars($userName) ?></span>
+        <a href="logout.php"
+            class="h-8 px-3 rounded-lg bg-red-500/10 border border-red-500/20 text-red-500 flex items-center gap-1 text-xs font-bold hover:bg-red-500/20 transition">
+            <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1">
+                </path>
+            </svg>
+            Logout
+        </a>
     </div>
 </header>
 

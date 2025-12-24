@@ -16,7 +16,7 @@ session_start();
 
 // Security: Redirect if not logged in
 if (!isset($_SESSION['user_id'])) {
-    header('Location: index.php');
+    header('Location: ../../');
     exit;
 }
 
@@ -228,11 +228,25 @@ ob_start();
 <header
     class="lg:hidden flex items-center justify-between p-4 app-card border-b-0 border-r-0 border-l-0 border-[var(--glass-border)] shrink-0 sticky top-0 z-30">
     <span class="font-tech font-bold text-lg tracking-wider app-text-main">CHECK-OUT</span>
-    <a href="dashboard.php" class="text-sm app-text-muted hover:app-text-main transition">
-        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-        </svg>
-    </a>
+    <div class="flex items-center gap-2">
+        <a href="dashboard.php"
+            class="h-8 px-3 rounded-lg app-card border border-[var(--glass-border)] app-text-main flex items-center gap-1 text-xs font-bold hover:bg-[var(--glass-border)] transition">
+            <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6">
+                </path>
+            </svg>
+            Home
+        </a>
+        <a href="logout.php"
+            class="h-8 px-3 rounded-lg bg-red-500/10 border border-red-500/20 text-red-500 flex items-center gap-1 text-xs font-bold hover:bg-red-500/20 transition">
+            <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1">
+                </path>
+            </svg>
+        </a>
+    </div>
 </header>
 
 <!-- Scrollable Main Content -->
@@ -313,7 +327,8 @@ ob_start();
                             <div class="text-right">
                                 <p class="text-xs text-gray-500 uppercase">Invoice #</p>
                                 <p class="font-mono font-bold text-sm">
-                                    <?= htmlspecialchars($bookingData['unique_booking_id']) ?></p>
+                                    <?= htmlspecialchars($bookingData['unique_booking_id']) ?>
+                                </p>
                                 <p class="text-xs text-gray-500 mt-2"><?= date('d M Y, h:i A') ?></p>
                             </div>
                         </div>
@@ -348,7 +363,8 @@ ob_start();
                             <div>
                                 <p class="text-xs text-gray-500 uppercase mb-1">Room Number</p>
                                 <p class="font-bold text-lg text-blue-600">
-                                    <?= htmlspecialchars($bookingData['room_number']) ?></p>
+                                    <?= htmlspecialchars($bookingData['room_number']) ?>
+                                </p>
                             </div>
                             <div>
                                 <p class="text-xs text-gray-500 uppercase mb-1">Category</p>
